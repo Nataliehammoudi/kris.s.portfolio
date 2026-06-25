@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Kris Azzeh — Theater Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+/*============================================================
+  RESET & ROOT
+============================================================*/
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --black:       #080608;
+  --deep:        #0D0A0F;
+  --burgundy:    #5C1A2A;
+  --burg-dark:   #3A0C18;
+  --burg-rich:   #7A2238;
+  --gold:        #C9A84C;
+  --gold-bright: #E8C56A;
+  --gold-dim:    rgba(201,168,76,0.18);
+  --gold-glow:   rgba(201,168,76,0.5);
+  --cream:       #F0E8D8;
+  --cream-dim:   rgba(240,232,216,0.5);
+  --cream-faint: rgba(240,232,216,0.2);
+  --navy:        #1F2041;
+  --silver:      #E0E1E9;
+  --silver-dim:  rgba(224,225,233,0.5);
+  --card-bg:     rgba(31,32,65,0.45);
+  --transition:  0.42s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--deep);
+  color: var(--cream);
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; font-family: inherit; }
+img { display: block; max-width: 100%; }
+
+/*============================================================
+  CURTAIN LOADER
+============================================================*/
+#loader {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--black);
+  pointer-events: all;
+}
+
+.curtain-panel {
+  position: absolute; top: 0; bottom: 0; width: 51%;
+  overflow: hidden;
+  transition: transform 1.8s cubic-bezier(0.77, 0, 0.18, 1);
+}
+.curtain-panel.left  { left: 0; }
+.curtain-panel.right { right: 0; }
+
+.curtain-fabric {
+  width: 100%; height: 100%;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      var(--burg-dark)  0px,
+      var(--burgundy)   10px,
+      #6e1f30           18px,
+      var(--burg-dark)  26px
+    );
+  position: relative;
+}
+
+/* velvet sheen */
+.curtain-fabric::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255,255,255,0.0)  0px,
+    rgba(255,255,255,0.05) 5px,
+    rgba(0,0,0,0.08)       10px,
+    rgba(255,255,255,0.0)  18px
+  );
+}
+
+/* swag hem at top */
+.curtain-fabric::after {
+  content: '';
+  position: absolute; top: 0; left: -5%; right: -5%; height: 90px;
+  background: var(--burg-dark);
+  clip-path: polygon(0 0, 100% 0, 100% 55%, 90% 100%, 80% 55%, 70% 100%, 60% 55%, 50% 100%, 40% 55%, 30% 100%, 20% 55%, 10% 100%, 0 55%);
+}
+
+/* valance rail */
+.curtain-panel::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 24px; z-index: 3;
+  background: linear-gradient(180deg, #1a1212 0%, #2c1a1a 100%);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.95);
+}
+
+/* gold trim on inner edge */
+.curtain-panel.left::after {
+  content: '';
+  position: absolute; top: 0; bottom: 0; right: 0; width: 3px;
+  background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 40%, transparent 100%);
+  opacity: 0.6;
+}
+.curtain-panel.right::after {
+  content: '';
+  position: absolute; top: 0; bottom: 0; left: 0; width: 3px;
+  background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 40%, transparent 100%);
+  opacity: 0.6;
+}
+
+.loader-content {
+  position: relative; z-index: 10; text-align: center; pointer-events: none;
+}
+
+.loader-name {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2.2rem, 5.5vw, 5rem);
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  text-shadow: 0 0 60px var(--gold-glow), 0 2px 6px rgba(0,0,0,0.95);
+  opacity: 0;
+  animation: fadeUp 1s ease 0.3s forwards;
+}
+
+.loader-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--cream-dim);
+  letter-spacing: 0.2em;
+  margin-top: 0.6rem;
+  opacity: 0;
+  animation: fadeUp 1s ease 0.8s forwards;
+}
+
+.loader-divider {
+  width: 80px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 1.2rem auto;
+  opacity: 0;
+  animation: fadeIn 1s ease 1.1s forwards;
+}
+
+.loader-btn {
+  display: inline-block;
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  padding: 0.85rem 2.4rem;
+  opacity: 0;
+  animation: fadeIn 1s ease 1.5s forwards;
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+  pointer-events: all;
+}
+.loader-btn:hover {
+  background: var(--gold);
+  color: var(--black);
+  box-shadow: 0 0 32px var(--gold-glow);
+}
+
+/* loader open states */
+#loader.open .curtain-panel.left  { transform: translateX(-96%); }
+#loader.open .curtain-panel.right { transform: translateX(96%); }
+#loader.gone  { display: none; }
+
+/*============================================================
+  PAGE TRANSITION VEIL
+============================================================*/
+#veil {
+  position: fixed; inset: 0; z-index: 8000;
+  background: var(--black);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+#veil.show { opacity: 1; pointer-events: all; }
+
+/*============================================================
+  NAVIGATION
+============================================================*/
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.3rem 4rem;
+  background: linear-gradient(180deg, rgba(8,6,8,0.95) 0%, rgba(8,6,8,0) 100%);
+  backdrop-filter: blur(4px);
+  transition: background 0.3s;
+}
+
+.nav-logo {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.nav-links {
+  display: flex; gap: 2.8rem; list-style: none; align-items: center;
+}
+
+.nav-links a {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+  transition: color 0.25s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute; bottom: -4px; left: 0; right: 0; height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transition: transform 0.25s ease;
+}
+.nav-links a:hover,
+.nav-links a.active { color: var(--gold); }
+.nav-links a:hover::after,
+.nav-links a.active::after { transform: scaleX(1); }
+
+.nav-burger {
+  display: none;
+  background: none; border: none;
+  flex-direction: column; gap: 5px; padding: 4px;
+}
+.nav-burger span {
+  width: 24px; height: 1px; background: var(--gold); display: block;
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+/*============================================================
+  PAGES CONTAINER
+============================================================*/
+.page {
+  display: none;
+  min-height: 100vh;
+  animation: pageIn 0.5s ease forwards;
+}
+.page.active { display: block; }
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+/*============================================================
+  SHARED COMPONENTS
+============================================================*/
+
+/* Stage spotlight ambient — reusable */
+.spotlight-bg {
+  position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0;
+}
+.spotlight-bg::before {
+  content: '';
+  position: absolute;
+  top: -30%; left: 50%; transform: translateX(-50%);
+  width: 70vw; height: 110vh;
+  background: conic-gradient(
+    from 270deg at 50% 0%,
+    transparent 0deg,
+    rgba(201,168,76,0.04) 18deg,
+    rgba(201,168,76,0.09) 30deg,
+    rgba(201,168,76,0.04) 42deg,
+    transparent 60deg
+  );
+  filter: blur(20px);
+}
+
+.section-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.8rem;
+}
+
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 600;
+  color: var(--cream);
+  line-height: 1.1;
+}
+
+.gold-rule {
+  width: 60px; height: 1px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  margin: 1.4rem 0 2.2rem;
+}
+
+.btn-primary {
+  display: inline-block;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  background: transparent;
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  padding: 0.85rem 2.4rem;
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+}
+.btn-primary:hover {
+  background: var(--gold);
+  color: var(--black);
+  box-shadow: 0 0 30px var(--gold-glow);
+}
+
+.btn-ghost {
+  display: inline-block;
+  border: 1px solid rgba(240,232,216,0.25);
+  color: var(--cream-dim);
+  background: transparent;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  padding: 0.7rem 1.8rem;
+  transition: border-color var(--transition), color var(--transition);
+}
+.btn-ghost:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/*============================================================
+  HOME PAGE
+============================================================*/
+#page-home {
+  position: relative;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+}
+
+.hero {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  padding: 8rem 4rem 6rem;
+}
+
+/* Stage floor gradient */
+.hero::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 30%;
+  background: linear-gradient(0deg, rgba(92,26,42,0.18) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Curtain side frames */
+.hero-frame-left,
+.hero-frame-right {
+  position: absolute; top: 0; bottom: 0; width: 90px;
+  pointer-events: none; z-index: 1;
+}
+.hero-frame-left {
+  left: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      var(--burg-dark) 0px, var(--burgundy) 8px, var(--burg-dark) 16px
+    );
+  mask-image: linear-gradient(90deg, rgba(0,0,0,0.85) 0%, transparent 100%);
+}
+.hero-frame-right {
+  right: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      var(--burg-dark) 0px, var(--burgundy) 8px, var(--burg-dark) 16px
+    );
+  mask-image: linear-gradient(270deg, rgba(0,0,0,0.85) 0%, transparent 100%);
+}
+
+/* Spotlight cone */
+.hero-spotlight {
+  position: absolute; top: -20%; left: 50%; transform: translateX(-50%);
+  width: 80vw; height: 130vh;
+  background: conic-gradient(
+    from 266deg at 50% 0%,
+    transparent 0deg,
+    rgba(201,168,76,0.03) 14deg,
+    rgba(201,168,76,0.07) 26deg,
+    rgba(240,232,216,0.04) 32deg,
+    rgba(201,168,76,0.07) 38deg,
+    rgba(201,168,76,0.03) 50deg,
+    transparent 64deg
+  );
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+/* Floor pool */
+.hero-floor-light {
+  position: absolute; bottom: 5%; left: 50%; transform: translateX(-50%);
+  width: 60vw; height: 15vh;
+  background: radial-gradient(ellipse, rgba(201,168,76,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative; z-index: 2; text-align: center; max-width: 800px;
+}
+
+.hero-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.6em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.8rem;
+  opacity: 0;
+  animation: fadeUp 0.9s ease 0.2s forwards;
+}
+
+.hero-name {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(3.5rem, 9vw, 8.5rem);
+  font-weight: 900;
+  color: var(--cream);
+  letter-spacing: 0.06em;
+  line-height: 0.95;
+  text-shadow: 0 0 80px rgba(201,168,76,0.2), 0 4px 16px rgba(0,0,0,0.8);
+  opacity: 0;
+  animation: fadeUp 1s ease 0.5s forwards;
+}
+
+.hero-tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.1rem, 2.8vw, 1.8rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--cream-dim);
+  letter-spacing: 0.08em;
+  margin-top: 1.2rem;
+  opacity: 0;
+  animation: fadeUp 1s ease 0.8s forwards;
+}
+
+.hero-divider {
+  width: 100px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 2rem auto;
+  opacity: 0;
+  animation: fadeIn 1s ease 1.1s forwards;
+}
+
+.hero-cta {
+  opacity: 0;
+  animation: fadeUp 1s ease 1.3s forwards;
+}
+
+/* Scroll indicator */
+.scroll-hint {
+  position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+  z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  opacity: 0;
+  animation: fadeIn 1.2s ease 2s forwards;
+}
+.scroll-hint span {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem; letter-spacing: 0.4em; text-transform: uppercase;
+  color: rgba(240,232,216,0.3);
+}
+.scroll-line {
+  width: 1px; height: 36px;
+  background: linear-gradient(180deg, var(--gold) 0%, transparent 100%);
+  animation: scrollPulse 1.8s ease infinite;
+}
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(1); }
+  50%       { opacity: 0.9; transform: scaleY(1.15); }
+}
+
+/*============================================================
+  ABOUT PAGE
+============================================================*/
+#page-about { padding-top: 7rem; }
+
+.about-hero {
+  position: relative;
+  min-height: 45vh;
+  display: flex; align-items: flex-end;
+  padding: 4rem;
+  overflow: hidden;
+}
+.about-hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 80% at 30% 50%, rgba(92,26,42,0.35) 0%, transparent 70%),
+    linear-gradient(180deg, var(--deep) 0%, rgba(13,10,15,0) 100%);
+}
+.about-hero h1 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2.5rem, 7vw, 6rem);
+  font-weight: 700;
+  color: var(--cream);
+  position: relative; z-index: 1;
+  line-height: 1;
+}
+.about-hero h1 em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.about-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem 6rem;
+  padding: 5rem 4rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.about-text p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-weight: 300;
+  line-height: 1.85;
+  color: var(--cream-dim);
+  margin-bottom: 1.4rem;
+}
+.about-text p strong {
+  color: var(--cream);
+  font-weight: 600;
+}
+
+.about-quote {
+  border-left: 2px solid var(--gold);
+  padding: 1.2rem 1.8rem;
+  margin: 2rem 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-style: italic;
+  color: var(--cream);
+  line-height: 1.6;
+  background: rgba(201,168,76,0.04);
+}
+
+.about-info-card {
+  background: var(--card-bg);
+  border: 1px solid rgba(201,168,76,0.12);
+  padding: 2.4rem;
+  height: fit-content;
+}
+
+.info-row {
+  display: flex; flex-direction: column; gap: 0.3rem;
+  margin-bottom: 1.8rem;
+  padding-bottom: 1.8rem;
+  border-bottom: 1px solid rgba(240,232,216,0.07);
+}
+.info-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.info-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem; letter-spacing: 0.35em;
+  text-transform: uppercase; color: var(--gold);
+}
+.info-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; color: var(--cream); font-weight: 300;
+}
+
+/*============================================================
+  PERFORMANCES PAGE
+============================================================*/
+#page-performances { padding-top: 7rem; }
+
+.performances-header {
+  padding: 3rem 4rem 3rem;
+  border-bottom: 1px solid rgba(201,168,76,0.1);
+}
+
+.perf-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(201,168,76,0.08);
+  margin: 0;
+}
+
+.perf-card {
+  background: var(--deep);
+  padding: 2.8rem;
+  position: relative;
+  overflow: hidden;
+  transition: background var(--transition);
+  cursor: default;
+}
+.perf-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.4s ease;
+}
+.perf-card:hover { background: rgba(31,32,65,0.6); }
+.perf-card:hover::before { transform: scaleX(1); }
+
+.perf-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem; letter-spacing: 0.4em;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 1rem;
+}
+
+.perf-card h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem; font-weight: 600;
+  color: var(--cream); margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+.perf-role {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem; font-style: italic;
+  color: var(--cream-dim); margin-bottom: 1.2rem;
+}
+
+.perf-desc {
+  font-size: 0.82rem; color: rgba(240,232,216,0.4);
+  line-height: 1.7; font-weight: 300;
+}
+
+.perf-year {
+  position: absolute; bottom: 2rem; right: 2rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem; letter-spacing: 0.2em;
+  color: rgba(201,168,76,0.3);
+}
+
+/* featured large card */
+.perf-card.featured {
+  grid-column: span 2;
+  background: rgba(92,26,42,0.2);
+  padding: 3.5rem;
+}
+.perf-card.featured h3 { font-size: 2.2rem; }
+
+/*============================================================
+  GALLERY PAGE
+============================================================*/
+#page-gallery { padding-top: 7rem; }
+
+.gallery-header {
+  padding: 3rem 4rem 3rem;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: 80px;
+  gap: 3px;
+  padding: 0 4rem 4rem;
+}
+
+.gallery-cell {
+  background: var(--card-bg);
+  border: 1px solid rgba(201,168,76,0.08);
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+.gallery-cell:hover { border-color: rgba(201,168,76,0.4); }
+
+.gallery-cell::after {
+  content: attr(data-label);
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem; font-style: italic;
+  color: rgba(240,232,216,0.25);
+  letter-spacing: 0.1em;
+  background: linear-gradient(135deg, rgba(31,32,65,0.3) 0%, rgba(13,10,15,0.5) 100%);
+  transition: color 0.3s, background 0.3s;
+}
+.gallery-cell:hover::after {
+  color: rgba(240,232,216,0.55);
+  background: linear-gradient(135deg, rgba(92,26,42,0.3) 0%, rgba(13,10,15,0.6) 100%);
+}
+
+/* Spanning */
+.gc-1  { grid-column: span 5; grid-row: span 4; }
+.gc-2  { grid-column: span 4; grid-row: span 3; }
+.gc-3  { grid-column: span 3; grid-row: span 3; }
+.gc-4  { grid-column: span 4; grid-row: span 2; }
+.gc-5  { grid-column: span 3; grid-row: span 4; }
+.gc-6  { grid-column: span 5; grid-row: span 2; }
+.gc-7  { grid-column: span 4; grid-row: span 3; }
+.gc-8  { grid-column: span 3; grid-row: span 2; }
+.gc-9  { grid-column: span 5; grid-row: span 3; }
+.gc-10 { grid-column: span 4; grid-row: span 2; }
+.gc-11 { grid-column: span 3; grid-row: span 2; }
+
+/*============================================================
+  SKILLS PAGE
+============================================================*/
+#page-skills { padding-top: 7rem; }
+
+.skills-hero {
+  padding: 3rem 4rem 0;
+  position: relative;
+}
+
+.skills-body {
+  padding: 3rem 4rem 5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.skills-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+}
+
+.skills-group { margin-bottom: 3rem; }
+
+.skill-category-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem; letter-spacing: 0.4em;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 1.4rem;
+  display: flex; align-items: center; gap: 1rem;
+}
+.skill-category-title::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(201,168,76,0.25), transparent);
+}
+
+.skill-item {
+  margin-bottom: 1.4rem;
+}
+.skill-item-top {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 0.45rem;
+}
+.skill-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem; font-weight: 600; color: var(--cream);
+}
+.skill-note {
+  font-size: 0.68rem; color: rgba(240,232,216,0.35);
+  font-family: 'Inter', sans-serif; letter-spacing: 0.1em;
+}
+.skill-bar-track {
+  height: 2px; background: rgba(240,232,216,0.08); position: relative;
+}
+.skill-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+  transition: width 1s ease;
+}
+
+.skills-quote {
+  grid-column: span 2;
+  text-align: center;
+  padding: 3rem;
+  border-top: 1px solid rgba(201,168,76,0.1);
+  border-bottom: 1px solid rgba(201,168,76,0.1);
+  margin-bottom: 1rem;
+}
+.skills-quote blockquote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  font-style: italic;
+  color: var(--cream-dim);
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+.skills-quote blockquote span {
+  color: var(--gold);
+  font-style: normal;
+}
+
+/*============================================================
+  CONTACT PAGE
+============================================================*/
+#page-contact { padding-top: 7rem; min-height: 100vh; display: flex; flex-direction: column; }
+
+.contact-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 3rem 4rem 5rem;
+}
+
+.contact-left { padding-right: 5rem; border-right: 1px solid rgba(201,168,76,0.1); }
+
+.contact-left .section-title { margin-bottom: 0.4rem; }
+
+.contact-intro {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; font-weight: 300;
+  color: var(--cream-dim); line-height: 1.8;
+  margin-bottom: 3rem;
+}
+
+.contact-cards {
+  display: flex; flex-direction: column; gap: 1.2rem;
+}
+
+.contact-card {
+  display: flex; align-items: center; gap: 1.6rem;
+  padding: 1.6rem 1.8rem;
+  background: var(--card-bg);
+  border: 1px solid rgba(201,168,76,0.1);
+  text-decoration: none;
+  color: var(--cream);
+  transition: border-color var(--transition), background var(--transition);
+}
+.contact-card:hover {
+  border-color: rgba(201,168,76,0.4);
+  background: rgba(31,32,65,0.7);
+}
+.cc-icon-wrap {
+  width: 40px; height: 40px;
+  border: 1px solid rgba(201,168,76,0.2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.cc-icon {
+  font-size: 0.9rem; color: var(--gold);
+  font-family: 'Cinzel', serif; font-weight: 700;
+}
+.cc-body { display: flex; flex-direction: column; gap: 0.2rem; }
+.cc-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--gold); opacity: 0.7;
+}
+.cc-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem; color: var(--cream); font-weight: 300;
+}
+
+.contact-right { padding-left: 5rem; }
+
+.contact-message-form { display: flex; flex-direction: column; gap: 1.2rem; }
+
+.cf-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem; letter-spacing: 0.35em;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 0.5rem; display: block;
+}
+
+.cf-input, .cf-textarea {
+  width: 100%;
+  background: rgba(31,32,65,0.3);
+  border: 1px solid rgba(240,232,216,0.1);
+  padding: 0.9rem 1.2rem;
+  color: var(--cream);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem; font-weight: 300;
+  outline: none;
+  transition: border-color var(--transition);
+}
+.cf-input:focus, .cf-textarea:focus {
+  border-color: rgba(201,168,76,0.45);
+}
+.cf-input::placeholder, .cf-textarea::placeholder {
+  color: rgba(240,232,216,0.2);
+  font-style: italic;
+}
+.cf-textarea {
+  resize: vertical; min-height: 140px;
+}
+
+.cf-btn {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem; letter-spacing: 0.35em;
+  text-transform: uppercase;
+  padding: 1rem 2.4rem;
+  cursor: pointer; align-self: flex-start;
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+}
+.cf-btn:hover {
+  background: var(--gold); color: var(--black);
+  box-shadow: 0 0 28px var(--gold-glow);
+}
+
+.contact-availability {
+  margin-top: 2.5rem; padding: 1.4rem 1.6rem;
+  border: 1px solid rgba(201,168,76,0.12);
+  background: rgba(92,26,42,0.15);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem; color: var(--cream-dim);
+  line-height: 1.7;
+}
+.contact-availability strong { color: var(--gold); font-weight: 600; }
+
+/*============================================================
+  FOOTER
+============================================================*/
+footer {
+  padding: 2rem 4rem;
+  border-top: 1px solid rgba(201,168,76,0.08);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+}
+.footer-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem; letter-spacing: 0.25em;
+  color: rgba(240,232,216,0.3); text-transform: uppercase;
+}
+.footer-copy {
+  font-size: 0.7rem; color: rgba(240,232,216,0.2);
+  font-family: 'Inter', sans-serif;
+}
+
+/*============================================================
+  AMBIENT DUST
+============================================================*/
+.dust-container { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+.dust-mote {
+  position: absolute; border-radius: 50%;
+  background: var(--gold); opacity: 0;
+  animation: dustRise linear infinite;
+}
+@keyframes dustRise {
+  0%   { opacity: 0; transform: translateY(0); }
+  20%  { opacity: 0.35; }
+  80%  { opacity: 0.15; }
+  100% { opacity: 0; transform: translateY(-110px) translateX(12px); }
+}
+
+/*============================================================
+  MOBILE NAV DRAWER
+============================================================*/
+#mobile-nav {
+  display: none;
+  position: fixed; inset: 0; z-index: 600;
+  background: rgba(8,6,8,0.97);
+  flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem;
+}
+#mobile-nav.open { display: flex; }
+#mobile-nav a {
+  font-family: 'Cinzel', serif;
+  font-size: 1.4rem; letter-spacing: 0.18em;
+  color: var(--cream-dim); text-transform: uppercase;
+  transition: color 0.25s;
+}
+#mobile-nav a:hover, #mobile-nav a.active { color: var(--gold); }
+#mobile-close {
+  position: absolute; top: 2rem; right: 2.5rem;
+  background: none; border: none; color: var(--cream-dim);
+  font-size: 1.6rem; cursor: pointer; transition: color 0.2s;
+  font-family: 'Inter', sans-serif; line-height: 1;
+}
+#mobile-close:hover { color: var(--gold); }
+
+/*============================================================
+  RESPONSIVE
+============================================================*/
+@media (max-width: 900px) {
+  #nav { padding: 1.2rem 2rem; }
+  .nav-links { display: none; }
+  .nav-burger { display: flex; }
+
+  .hero { padding: 7rem 2rem 5rem; }
+  .hero-frame-left, .hero-frame-right { width: 40px; }
+
+  .about-body { grid-template-columns: 1fr; gap: 3rem; padding: 3rem 2rem; }
+  .about-hero { padding: 3rem 2rem; }
+
+  .performances-header { padding: 2rem; }
+  .perf-grid { grid-template-columns: 1fr; }
+  .perf-card.featured { grid-column: span 1; }
+
+  .gallery-grid {
+    padding: 0 2rem 3rem;
+    grid-template-columns: repeat(6,1fr);
+    grid-auto-rows: 70px;
+  }
+  .gc-1 { grid-column: span 6; grid-row: span 3; }
+  .gc-2 { grid-column: span 6; grid-row: span 3; }
+  .gc-3 { grid-column: span 3; grid-row: span 3; }
+  .gc-4 { grid-column: span 3; grid-row: span 2; }
+  .gc-5 { grid-column: span 6; grid-row: span 3; }
+  .gc-6 { grid-column: span 3; grid-row: span 2; }
+  .gc-7 { grid-column: span 3; grid-row: span 3; }
+  .gc-8 { grid-column: span 6; grid-row: span 2; }
+  .gc-9 { grid-column: span 6; grid-row: span 3; }
+  .gc-10 { grid-column: span 3; grid-row: span 2; }
+  .gc-11 { grid-column: span 3; grid-row: span 2; }
+
+  .skills-hero { padding: 2rem 2rem 0; }
+  .skills-body { padding: 2rem 2rem 4rem; }
+  .skills-layout { grid-template-columns: 1fr; gap: 2rem; }
+  .skills-quote { grid-column: span 1; }
+
+  .contact-main {
+    grid-template-columns: 1fr; padding: 2rem 2rem 4rem;
+  }
+  .contact-left { padding-right: 0; border-right: none; border-bottom: 1px solid rgba(201,168,76,0.1); padding-bottom: 3rem; }
+  .contact-right { padding-left: 0; padding-top: 3rem; }
+
+  footer { padding: 1.5rem 2rem; }
+  .gallery-header, .performances-header { padding: 2rem 2rem 1.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- DUST -->
+<div class="dust-container" id="dust"></div>
+
+<!-- CURTAIN LOADER -->
+<div id="loader">
+  <div class="curtain-panel left"><div class="curtain-fabric"></div></div>
+  <div class="curtain-panel right"><div class="curtain-fabric"></div></div>
+  <div class="loader-content">
+    <div class="loader-name">Kris Azzeh</div>
+    <div class="loader-subtitle">Theater Student. Performer. Storyteller.</div>
+    <div class="loader-divider"></div>
+    <button class="loader-btn" onclick="enterStage()">Enter the Stage</button>
+  </div>
+</div>
+
+<!-- PAGE VEIL -->
+<div id="veil"></div>
+
+<!-- NAVIGATION -->
+<nav id="nav" style="display:none;">
+  <div class="nav-logo">Kris Azzeh</div>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#" data-page="home" class="nav-link active">Home</a></li>
+    <li><a href="#" data-page="about" class="nav-link">About</a></li>
+    <li><a href="#" data-page="performances" class="nav-link">Performances</a></li>
+    <li><a href="#" data-page="gallery" class="nav-link">Gallery</a></li>
+    <li><a href="#" data-page="skills" class="nav-link">Skills</a></li>
+    <li><a href="#" data-page="contact" class="nav-link">Contact</a></li>
+  </ul>
+  <button class="nav-burger" id="burger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE NAV -->
+<div id="mobile-nav">
+  <button id="mobile-close" onclick="closeMobileNav()">&#10005;</button>
+  <a href="#" data-page="home" class="nav-link">Home</a>
+  <a href="#" data-page="about" class="nav-link">About</a>
+  <a href="#" data-page="performances" class="nav-link">Performances</a>
+  <a href="#" data-page="gallery" class="nav-link">Gallery</a>
+  <a href="#" data-page="skills" class="nav-link">Skills</a>
+  <a href="#" data-page="contact" class="nav-link">Contact</a>
+</div>
+
+<!--============================================================
+  HOME
+=============================================================-->
+<div class="page active" id="page-home">
+  <section class="hero">
+    <div class="hero-frame-left"></div>
+    <div class="hero-frame-right"></div>
+    <div class="hero-spotlight"></div>
+    <div class="hero-floor-light"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">University of Jordan</div>
+      <h1 class="hero-name">Kris Azzeh</h1>
+      <p class="hero-tagline">Theater Student. Performer. Storyteller.</p>
+      <div class="hero-divider"></div>
+      <div class="hero-cta">
+        <button class="btn-primary" onclick="navigateTo('about')">Enter the Stage</button>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-name">Kris Azzeh &mdash; Theater Portfolio</div>
+    <div class="footer-copy">University of Jordan &nbsp;&middot;&nbsp; Amman</div>
+  </footer>
+</div>
+
+<!--============================================================
+  ABOUT
+=============================================================-->
+<div class="page" id="page-about">
+  <div class="about-hero">
+    <div class="about-hero-bg"></div>
+    <h1>About<br/><em>Me</em></h1>
+  </div>
+
+  <div class="about-body">
+    <div class="about-text">
+      <div class="section-label">The Performer</div>
+      <div class="gold-rule"></div>
+      <p>
+        My name is <strong>Kris Azzeh</strong>. I am a theater student at the <strong>University of Jordan</strong>,
+        where I study performance, dramatic theory, stagecraft, and the craft of character work.
+        Theater, for me, is not a subject. It is a way of being fully present in the world.
+      </p>
+      <p>
+        I am passionate about <strong>performance</strong>, the art of inhabiting another person so completely
+        that the boundary between self and character dissolves in front of an audience.
+        I believe great acting begins not in the voice or the body, but in genuine emotional truth.
+      </p>
+      <p>
+        Storytelling drives everything I do. Whether on a stage, behind a camera, or in a rehearsal room,
+        I am always asking: what does this story need? What does it demand from the person telling it?
+      </p>
+
+      <div class="about-quote">
+        "The stage is not a place you walk onto. It is a place you become."
+      </div>
+
+      <p>
+        I am drawn to <strong>stage presence</strong>, the invisible force that makes an audience lean in
+        without knowing why. I study it, practise it, and am humbled by it daily.
+        I am also committed to the collaborative nature of theater, the ensemble, the director,
+        the playwright, the light designer, all of it a single organism telling one truth.
+      </p>
+      <p>
+        I am based in <strong>Amman, Jordan</strong>. I am open to productions, collaborations,
+        workshops, and conversations.
+      </p>
+    </div>
+
+    <div>
+      <div class="about-info-card">
+        <div class="info-row">
+          <span class="info-label">Full Name</span>
+          <span class="info-value">Kris Azzeh</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">University</span>
+          <span class="info-value">University of Jordan</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Major</span>
+          <span class="info-value">Theater Arts</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Based In</span>
+          <span class="info-value">Amman, Jordan</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Focus</span>
+          <span class="info-value">Performance, Character Work,<br/>Stage Presence, Storytelling</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Status</span>
+          <span class="info-value">Available for Productions &amp; Collaborations</span>
+        </div>
+      </div>
+
+      <div style="margin-top:1.4rem;">
+        <button class="btn-ghost" onclick="navigateTo('contact')">Get in Touch</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-name">Kris Azzeh</div>
+    <div class="footer-copy">&copy; 2025</div>
+  </footer>
+</div>
+
+<!--============================================================
+  PERFORMANCES
+=============================================================-->
+<div class="page" id="page-performances">
+  <div class="performances-header">
+    <div class="section-label">On Stage</div>
+    <h1 class="section-title">Performances</h1>
+    <div class="gold-rule"></div>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--cream-dim);max-width:500px;font-weight:300;line-height:1.7;">
+      A record of roles, productions, and moments on stage. This is a living document, updated as new work unfolds.
+    </p>
+  </div>
+
+  <div class="perf-grid">
+    <div class="perf-card featured">
+      <div class="perf-tag">University Production</div>
+      <h3>Add Your Featured Production Title Here</h3>
+      <div class="perf-role">Lead Role</div>
+      <p class="perf-desc">
+        Describe your experience with this production: the director, the rehearsal process,
+        what the role taught you, what the stage felt like on opening night. Replace this placeholder
+        with your actual featured work.
+      </p>
+      <div class="perf-year">2025</div>
+    </div>
+
+    <div class="perf-card">
+      <div class="perf-tag">Monologue</div>
+      <h3>Classical Monologue Study</h3>
+      <div class="perf-role">Solo Performance</div>
+      <p class="perf-desc">Add the title and context of a monologue you have performed or studied in class.</p>
+      <div class="perf-year">2025</div>
+    </div>
+
+    <div class="perf-card">
+      <div class="perf-tag">Workshop</div>
+      <h3>Improvisation Workshop</h3>
+      <div class="perf-role">Ensemble Performer</div>
+      <p class="perf-desc">Describe a workshop, intensive, or lab you participated in and what you took from it.</p>
+      <div class="perf-year">2025</div>
+    </div>
+
+    <div class="perf-card">
+      <div class="perf-tag">Production</div>
+      <h3>Production Title Placeholder</h3>
+      <div class="perf-role">Supporting Role</div>
+      <p class="perf-desc">Add a production you were part of. Include the director, venue, and a line about the experience.</p>
+      <div class="perf-year">2024</div>
+    </div>
+
+    <div class="perf-card">
+      <div class="perf-tag">Rehearsal Project</div>
+      <h3>Scene Study</h3>
+      <div class="perf-role">Character Work</div>
+      <p class="perf-desc">Describe a scene study or in-class performance that challenged or defined you as a performer.</p>
+      <div class="perf-year">2024</div>
+    </div>
+
+    <div class="perf-card">
+      <div class="perf-tag">Devised Work</div>
+      <h3>Original Devised Piece</h3>
+      <div class="perf-role">Creator &amp; Performer</div>
+      <p class="perf-desc">If you have devised original work with a group or solo, document it here with context and process.</p>
+      <div class="perf-year">2024</div>
+    </div>
+
+    <div class="perf-card">
+      <div class="perf-tag">Coming Soon</div>
+      <h3>Upcoming Production</h3>
+      <div class="perf-role">Role TBC</div>
+      <p class="perf-desc">Placeholder for your next project. Update this card when your next performance is confirmed.</p>
+      <div class="perf-year">2025</div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-name">Kris Azzeh</div>
+    <div class="footer-copy">&copy; 2025</div>
+  </footer>
+</div>
+
+<!--============================================================
+  GALLERY
+=============================================================-->
+<div class="page" id="page-gallery">
+  <div class="gallery-header">
+    <div class="section-label">Visual Archive</div>
+    <h1 class="section-title">Gallery</h1>
+    <div class="gold-rule"></div>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--cream-dim);font-weight:300;line-height:1.7;">
+      Backstage. On stage. Rehearsal. Portrait. Add your photography by replacing these placeholders with image tags.
+    </p>
+  </div>
+
+  <div class="gallery-grid">
+    <div class="gallery-cell gc-1"  data-label="Stage Portrait"></div>
+    <div class="gallery-cell gc-2"  data-label="Rehearsal"></div>
+    <div class="gallery-cell gc-3"  data-label="Backstage"></div>
+    <div class="gallery-cell gc-4"  data-label="Performance"></div>
+    <div class="gallery-cell gc-5"  data-label="Character Study"></div>
+    <div class="gallery-cell gc-6"  data-label="Stage Lighting"></div>
+    <div class="gallery-cell gc-7"  data-label="Ensemble"></div>
+    <div class="gallery-cell gc-8"  data-label="Close-up"></div>
+    <div class="gallery-cell gc-9"  data-label="Production Still"></div>
+    <div class="gallery-cell gc-10" data-label="Movement"></div>
+    <div class="gallery-cell gc-11" data-label="Moment"></div>
+  </div>
+
+  <footer>
+    <div class="footer-name">Kris Azzeh</div>
+    <div class="footer-copy">&copy; 2025</div>
+  </footer>
+</div>
+
+<!--============================================================
+  SKILLS
+=============================================================-->
+<div class="page" id="page-skills">
+  <div class="skills-hero">
+    <div class="section-label">Craft</div>
+    <h1 class="section-title">Skills</h1>
+    <div class="gold-rule"></div>
+  </div>
+
+  <div class="skills-body">
+    <div class="skills-layout">
+
+      <div class="skills-quote">
+        <blockquote>
+          "Every skill on this page is a form of <span>listening</span> made visible."
+        </blockquote>
+      </div>
+
+      <div>
+        <div class="skill-category-title">Performance</div>
+
+        <div class="skill-item">
+          <div class="skill-item-top">
+            <span class="skill-name">Acting</span>
+            <span class="skill-note">Core Discipline</span>
+          </div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:92%"></div></div>
+        </div>
+
+        <div class="skill-item">
+          <div class="skill-item-top">
+            <span class="skill-name">Stage Presence</span>
+            <span class="skill-note">In Development</span>
+          </div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:85%"></div></div>
+        </div>
+
+        <div class="skill-item">
+          <div class="skill-item-top">
+            <span class="skill-name">Improvisation</span>
+            <span class="skill-note">Active Practice</span>
+          </div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:80%"></div></div>
+        </div>
+
+        <div class="skill-item">
+          <div class="skill-item-top">
+            <span class="skill-name">Voice Control</span>
+            <span class="skill-note">Vocal Training</span>
+          </div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:78%"></div></div>
+        </div>
+
+        <div class="skill-item">
+          <div class="skill-item-top">
+            <span class="skill-name">Movement &amp; Physical Theater</span>
+            <span class="skill-note">Body Work</span>
+          </div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:75%"></div></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="skill-category-title">Craft &amp; Collaboration</div>
+
+        <div class="skill-item">
+          <div class="skill-item-top">
+            <span class="skill-name">Character Analysis</span>
+            <span class="skill-note">Script Work</span>
+          </div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:88%"></div></div>
+        </div>
+
+        <div class="skill-item">
+          <div class="skill-item-top">
+            <span class="skill-name">Script Reading</span>
+            <span class="skill-note">Dramaturgical</span>
+          </div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:85%"></div></div>
+        </div>
+
+        <div class="skill-item">
+          <div class="skill-item-top">
+            <span class="skill-name">Performance Storytelling</span>
+            <span class="skill-note">Narrative Focus</span>
+          </div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:87%"></div></div>
+        </div>
+
+        <div class="skill-item">
+          <div class="skill-item-top">
+            <span class="skill-name">Ensemble Teamwork</span>
+            <span class="skill-note">Collective Work</span>
+          </div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:90%"></div></div>
+        </div>
+
+        <div class="skill-item">
+          <div class="skill-item-top">
+            <span class="skill-name">Sketching &amp; Visual Direction</span>
+            <span class="skill-note">Visual Arts</span>
+          </div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:72%"></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-name">Kris Azzeh</div>
+    <div class="footer-copy">&copy; 2025</div>
+  </footer>
+</div>
+
+<!--============================================================
+  CONTACT
+=============================================================-->
+<div class="page" id="page-contact">
+  <div class="contact-main">
+    <div class="contact-left">
+      <div class="section-label">Reach Out</div>
+      <h1 class="section-title">Contact</h1>
+      <div class="gold-rule"></div>
+      <p class="contact-intro">
+        Whether you are casting, collaborating, directing, or simply curious,
+        I welcome the conversation. Theater begins with two people in a room.
+      </p>
+
+      <div class="contact-cards">
+        <a href="mailto:krisazzeh@gmail.com" class="contact-card">
+          <div class="cc-icon-wrap"><span class="cc-icon">@</span></div>
+          <div class="cc-body">
+            <span class="cc-label">Email</span>
+            <span class="cc-value">krisazzeh@gmail.com</span>
+          </div>
+        </a>
+
+        <a href="tel:+962781224248" class="contact-card">
+          <div class="cc-icon-wrap"><span class="cc-icon" style="font-size:0.75rem;">TEL</span></div>
+          <div class="cc-body">
+            <span class="cc-label">Phone</span>
+            <span class="cc-value">+962 781 224 248</span>
+          </div>
+        </a>
+
+        <a href="https://instagram.com/kris.azzeh" target="_blank" class="contact-card">
+          <div class="cc-icon-wrap"><span class="cc-icon" style="font-size:0.75rem;">IG</span></div>
+          <div class="cc-body">
+            <span class="cc-label">Instagram</span>
+            <span class="cc-value">@kris.azzeh</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="contact-availability">
+        <strong>Currently available</strong> for university productions, independent theater projects,
+        workshops, and creative collaborations in Amman and beyond.
+      </div>
+    </div>
+
+    <div class="contact-right">
+      <div class="section-label">Send a Message</div>
+      <div class="gold-rule" style="margin-top:0.8rem;"></div>
+      <div class="contact-message-form">
+        <div>
+          <label class="cf-label">Your Name</label>
+          <input class="cf-input" type="text" placeholder="Who are you?"/>
+        </div>
+        <div>
+          <label class="cf-label">Your Email</label>
+          <input class="cf-input" type="email" placeholder="your@email.com"/>
+        </div>
+        <div>
+          <label class="cf-label">Subject</label>
+          <input class="cf-input" type="text" placeholder="Production, Collaboration, Other"/>
+        </div>
+        <div>
+          <label class="cf-label">Message</label>
+          <textarea class="cf-textarea" placeholder="Tell me about your project or idea..."></textarea>
+        </div>
+        <button class="cf-btn">Send Message</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-name">Kris Azzeh</div>
+    <div class="footer-copy">&copy; 2025 &nbsp;&middot;&nbsp; Amman, Jordan</div>
+  </footer>
+</div>
+
+<!--============================================================
+  JAVASCRIPT
+=============================================================-->
+<script>
+/* ---- Curtain open ---- */
+function enterStage() {
+  const loader = document.getElementById('loader');
+  const nav = document.getElementById('nav');
+  loader.classList.add('open');
+  setTimeout(() => {
+    loader.classList.add('gone');
+    nav.style.display = 'flex';
+    spawnDust();
+  }, 2000);
+}
+
+/* ---- Page navigation ---- */
+function navigateTo(id) {
+  const veil = document.getElementById('veil');
+  veil.classList.add('show');
+  setTimeout(() => {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById('page-' + id);
+    if (target) {
+      target.classList.add('active');
+      window.scrollTo(0, 0);
+    }
+    document.querySelectorAll('.nav-link').forEach(a => {
+      a.classList.toggle('active', a.dataset.page === id);
+    });
+    veil.classList.remove('show');
+    closeMobileNav();
+  }, 380);
+}
+
+/* ---- Nav links ---- */
+document.querySelectorAll('.nav-link').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    navigateTo(a.dataset.page);
+  });
+});
+
+/* ---- Mobile nav ---- */
+document.getElementById('burger').addEventListener('click', () => {
+  document.getElementById('mobile-nav').classList.add('open');
+});
+function closeMobileNav() {
+  document.getElementById('mobile-nav').classList.remove('open');
+}
+
+/* ---- Escape to close mobile nav ---- */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeMobileNav();
+});
+
+/* ---- Dust motes ---- */
+function spawnDust() {
+  const c = document.getElementById('dust');
+  for (let i = 0; i < 28; i++) {
+    const d = document.createElement('div');
+    d.className = 'dust-mote';
+    const s = Math.random() * 2.2 + 0.4;
+    d.style.cssText = [
+      'width:' + s + 'px',
+      'height:' + s + 'px',
+      'left:' + (Math.random() * 100) + '%',
+      'bottom:' + (Math.random() * 50) + '%',
+      'animation-duration:' + (7 + Math.random() * 10) + 's',
+      'animation-delay:' + (Math.random() * 9) + 's'
+    ].join(';');
+    c.appendChild(d);
+  }
+}
+
+/* ---- Animate skill bars when page opens ---- */
+function animateSkillBars() {
+  document.querySelectorAll('.skill-bar-fill').forEach(bar => {
+    const w = bar.style.width;
+    bar.style.width = '0%';
+    setTimeout(() => { bar.style.width = w; }, 100);
+  });
+}
+
+const origNavigateTo = navigateTo;
+window.navigateTo = function(id) {
+  origNavigateTo(id);
+  if (id === 'skills') setTimeout(animateSkillBars, 550);
+};
+</script>
+</body>
+</html>
